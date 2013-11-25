@@ -1,6 +1,6 @@
 # assemble-image-resizer
 
-> [assemble](http://assemble.io) plugin for resizing images found in your templates.
+[Assemble](http://assemble.io) plugin for resizing images found in your templates.
 
 ## Installation
 
@@ -21,6 +21,7 @@ Modify your `assemble`-options in your `Gruntfile` so that the `assemble-image-r
           // ...
         },
       },
+      
       // ...
     }
     
@@ -41,17 +42,17 @@ With the example-configuration from above this will output
 ## Possible resize formats
 
 <dl>
-  <dt>200x300</dt>
-  <dd>**fit**:Resize image fit within 200x300 (touch from outside).</dd>
+  <dt><code>200x300</code></dt>
+  <dd><strong>fit</strong> Resize image fit within 200x300 (touch from outside).</dd>
 
-  <dt>200x</dt>  
+  <dt><code>200x</code></dt>  
   <dd>Resize image to width of at least 200.</dd>
 
-  <dt>x300</dt>
+  <dt><code>x300</code></dt>
   <dd>Resize image to height of at least 300.</dd>
   
-  <dt>200x300#</dt>
-  <dd>**fill**: Resize image to fill 200x300 (touch from inside).</dd>
+  <dt><code>200x300#</code></dt>
+  <dd><strong>fill</strong> Resize image to fill 200x300 (touch from inside).</dd>
 </dl>
 
 ## To-Do
