@@ -1,6 +1,7 @@
 async = require 'async'
 path = require 'path'
 child_process = require 'child_process'
+workers = require('os').cpus().length
 
 JOB_QUEUE = "imageResizerJobs"
 CONFIG_PROPERTY = "imageResizer"
@@ -89,7 +90,7 @@ postprocess = (params, callback) ->
         if err then grunt.log.error() else grunt.log.ok()
         next err
     
-  async.eachLimit jobIds, 4, iterator, callback
+  async.eachLimit jobIds, workers, iterator, callback
   
 preprocess = (params, callback) ->
   jobs = params.assemble.options[JOB_QUEUE] ?= {}
