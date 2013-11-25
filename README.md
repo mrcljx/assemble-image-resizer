@@ -49,7 +49,7 @@ With the above configuration an image will
     
 With the example-configuration from above this will output
 
-```
+```html
 <div>
   <img src="/resize-cache/selfie.png-128x128h.jpg">
 </div>
