@@ -59,7 +59,7 @@ With the example-configuration from above this will output
 
 <dl>
   <dt><code>200x300</code></dt>
-  <dd><strong>fit</strong> Resize image fit within 200x300 (touch from outside).</dd>
+  <dd><strong>fit</strong> Resize image fit within 200x300 (touch from inside).</dd>
 
   <dt><code>200x</code></dt>  
   <dd>Resize image to width of at least 200.</dd>
@@ -68,7 +68,7 @@ With the example-configuration from above this will output
   <dd>Resize image to height of at least 300.</dd>
   
   <dt><code>200x300#</code></dt>
-  <dd><strong>fill</strong> Resize image to fill 200x300 (touch from inside).</dd>
+  <dd><strong>fill</strong> Resize image to fill 200x300 (touch from outside).</dd>
 </dl>
 
 ## To-Do
