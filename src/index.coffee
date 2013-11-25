@@ -19,21 +19,23 @@ postprocess = (params, callback) ->
   srcRoot = getOption params, "srcRoot", "public"
   destRoot = getOption params, "destRoot", "dest"
   subpath = getOption params, "subpath", "resize-cache"
+  processed = skipped = missing = 0
   
   iterator = (id, next) -> 
     job = jobs[id]
     src = path.join srcRoot, job.src
     dest = path.join destRoot, id
-    line = "#{src} -> #{dest} "
+    line = "Resizing #{dest.cyan} "
     
     unless grunt.file.exists src
+      missing++
       grunt.log.write line
-      grunt.log.error "MISSING"
+      grunt.log.error "Couldn't find #{src.cyan}"
       return next()
       
     if grunt.file.exists dest
-      grunt.log.write line
-      grunt.log.error "EXISTS"
+      skipped++
+      grunt.log.writeln line + "EXISTS".grey
       return next()
     
     child_process.execFile "identify", ['-format', '%w,%h,%[channels]', src], {}, (err, stdout) ->
@@ -88,9 +90,12 @@ postprocess = (params, callback) ->
       child_process.execFile "convert", args, {}, (err) -> 
         grunt.log.write line
         if err then grunt.log.error() else grunt.log.ok()
+        processed++ unless err
         next err
     
-  async.eachLimit jobIds, workers, iterator, callback
+  async.eachLimit jobIds, workers, iterator, (err) ->
+    grunt.log.ok "#{String(processed).green} images resized, #{String(skipped).grey} images skipped, #{String(missing).red} images missing." unless err
+    callback err
   
 preprocess = (params, callback) ->
   jobs = params.assemble.options[JOB_QUEUE] ?= {}
