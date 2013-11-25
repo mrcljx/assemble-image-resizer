@@ -4,26 +4,34 @@
 
 ## Installation
 
+From the same directory as your project's `Gruntfile` and `package.json`, install this plugin with the following command:
+
+```bash
+npm install assemble-image-resizer --save-dev
+```
+
 Modify your `assemble`-options in your `Gruntfile` so that the `assemble-image-resizer` plugin is used. You can also specify `imageResizer`-options (optional).
 
-    grunt.initConfig({
+```js
+grunt.initConfig({
+  // ...
+  
+  assemble: {
+    options: {
       // ...
-      
-      assemble: {
-        options: {
-          // ...
-          plugins: [require("assemble-image-resizer")],
-          imageResizer: { // these are the defaults
-            srcRoot: "public",
-            destRoot: "dest",
-            subpath: "resize-cache"
-          }
-          // ...
-        },
-      },
-      
+      plugins: [require("assemble-image-resizer")],
+      imageResizer: { // these are the defaults
+        srcRoot: "public",
+        destRoot: "dest",
+        subpath: "resize-cache"
+      }
       // ...
-    }
+    },
+  },
+  
+  // ...
+}
+```
     
 With the above configuration an image will
 
@@ -32,16 +40,20 @@ With the above configuration an image will
 - have the URL `/resize-cache/resized-image.jpg`.
 
 ## Usage (with `assemble-liquid`)
-    
-    <div>
-      {{ "/images/selfie.png" | resize:"128x128#" | image_tag }}
-    </div>
+   
+```html 
+<div>
+  {{ "/images/selfie.png" | resize:"128x128#" | image_tag }}
+</div>
+```
     
 With the example-configuration from above this will output
 
-    <div>
-      <img src="/resize-cache/selfie.png-128x128h.jpg">
-    </div>
+```
+<div>
+  <img src="/resize-cache/selfie.png-128x128h.jpg">
+</div>
+```
 
 ## Possible resize formats
 
