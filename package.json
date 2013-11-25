@@ -1,0 +1,37 @@
+{
+  "name": "assemble-image-resizer",
+  "version": "0.1.0",
+  "description": "Assemble plugin that allows to resize your images",
+  "main": "src/index.coffee",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sirlantis/assemble-image-resizer.git"
+  },
+  "keywords": [
+    "assemble",
+    "image",
+    "image resizing",
+    "resizing",
+    "imagemagick"
+  ],
+  "author": "Marcel Jackwerth",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sirlantis/assemble-image-resizer/issues"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "assemble": "~0.4.0",
+    "coffee-script": "~1.6.3"
+  },
+  "peerDependencies": {
+    "grunt": "~0.4.1",
+    "assemble": "~0.4.0"
+  },
+  "dependencies": {
+    "async": "~0.2.9"
+  }
+}
