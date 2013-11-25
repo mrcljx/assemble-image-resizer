@@ -25,7 +25,11 @@ Modify your `assemble`-options in your `Gruntfile` so that the `assemble-image-r
       // ...
     }
     
-In the example above a resized image will be stored in `dest/resize-cache/resized-image-123.jpg` while the url will be `/resize-cache/resized-image-123.jpg`.
+With the above configuration an image will
+
+- be loaded from `public/image.png`,
+- be stored in `dest/resize-cache/resized-image.jpg`, and
+- have the URL `/resize-cache/resized-image.jpg`.
 
 ## Usage (with `assemble-liquid`)
     
