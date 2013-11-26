@@ -99,12 +99,20 @@ postprocess = (params, callback) ->
   
 preprocess = (params, callback) ->
   jobs = params.assemble.options[JOB_QUEUE] ?= {}
+  extensionMatcher = /\.([a-z]+)$/
   
-  makeId = ->
+  makeId = (src) ->
     subpath = getOption params, "subpath", "resize-cache"
     s = [arguments...].join("-")
     s = s.slice(1).replace(/\//g, "_").replace(/#/g, 'h').replace(/</g, 'l').replace(/>/g, 'r').replace(/!/g, 'b')
-    "/#{subpath}/#{s}.jpg"
+    ext = getOption params, "defaultFormat", path.extname(src).slice(1)
+    match = extensionMatcher.exec s
+    
+    if match
+      ext = match[1]
+      s = s.replace extensionMatcher, ""
+      
+    "/#{subpath}/#{s}.#{ext}"
   
   enqueue = (src, dimensions) ->
     command = /^([0-9]*)x([0-9]*)(.*)$/.exec dimensions

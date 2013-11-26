@@ -57,6 +57,8 @@ With the example-configuration from above this will output
 
 ## Possible resize formats
 
+The syntax of the resize-argument is `[width]x[height][flags][.extension]`.
+
 <dl>
   <dt><code>200x300</code></dt>
   <dd><strong>fit</strong> Resize image fit within 200x300 (touch from inside).</dd>
@@ -69,6 +71,9 @@ With the example-configuration from above this will output
   
   <dt><code>200x300#</code></dt>
   <dd><strong>fill</strong> Resize image to fill 200x300 (touch from outside).</dd>
+  
+  <dt><code>200x.jpg</code></dt>
+  <dd>Resize image to width of at least 200 and convert it to a JPEG.</dd>
 </dl>
 
 ## To-Do
