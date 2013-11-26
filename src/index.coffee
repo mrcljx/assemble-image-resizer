@@ -23,14 +23,15 @@ postprocess = (params, callback) ->
   
   iterator = (id, next) -> 
     job = jobs[id]
-    src = path.join srcRoot, job.src
+    sources = path.join srcRoot, job.src
+    src = params.grunt.file.expand(sources)[0]
     dest = path.join destRoot, id
     line = "Resizing #{dest.cyan} "
     
-    unless grunt.file.exists src
+    unless src
       missing++
       grunt.log.write line
-      grunt.log.error "Couldn't find #{src.cyan}"
+      grunt.log.error "Couldn't find #{sources.cyan}"
       return next()
       
     if grunt.file.exists dest
