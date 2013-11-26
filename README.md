@@ -20,10 +20,11 @@ grunt.initConfig({
     options: {
       // ...
       plugins: [require("assemble-image-resizer")],
-      imageResizer: { // these are the defaults
-        srcRoot: "public",
-        destRoot: "dest",
-        subpath: "resize-cache"
+      imageResizer: {
+        srcRoot: "public", // default
+        destRoot: "dest", // default
+        subpath: "resize-cache", // default
+        defaultFormat: "jpg", // default is "same as source"
       }
       // ...
     },
