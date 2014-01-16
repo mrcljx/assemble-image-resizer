@@ -2,6 +2,7 @@ async = require 'async'
 path = require 'path'
 child_process = require 'child_process'
 workers = require('os').cpus().length
+fs = require 'fs'
 
 JOB_QUEUE = "imageResizerJobs"
 CONFIG_PROPERTY = "imageResizer"
@@ -27,6 +28,7 @@ postprocess = (params, callback) ->
     src = params.grunt.file.expand(sources)[0]
     dest = path.join destRoot, id
     line = "Resizing #{dest.cyan} "
+    reason = ""
     
     unless src
       missing++
@@ -35,6 +37,9 @@ postprocess = (params, callback) ->
       return next()
       
     if grunt.file.exists dest
+      if fs.statSync(src).mtime > fs.statSync(dest).mtime
+        reason = " CHANGED".green
+      else
       skipped++
       grunt.log.writeln line + "EXISTS".grey
       return next()
@@ -89,7 +94,7 @@ postprocess = (params, callback) ->
       args.push dest
       
       child_process.execFile "convert", args, {}, (err) -> 
-        grunt.log.write line
+        grunt.log.write(line + reason)
         if err then grunt.log.error() else grunt.log.ok()
         processed++ unless err
         next err
