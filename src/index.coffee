@@ -20,87 +20,101 @@ postprocess = (params, callback) ->
   srcRoot = getOption params, "srcRoot", "public"
   destRoot = getOption params, "destRoot", "dest"
   subpath = getOption params, "subpath", "resize-cache"
-  processed = skipped = missing = 0
-  
-  iterator = (id, next) -> 
-    job = jobs[id]
-    sources = path.join srcRoot, job.src
-    src = params.grunt.file.expand(sources)[0]
-    dest = path.join destRoot, id
-    line = "Resizing #{dest.cyan} "
-    reason = ""
-    
-    unless src
-      missing++
-      grunt.log.write line
-      grunt.log.error "Couldn't find #{sources.cyan}"
-      return next()
-      
-    if grunt.file.exists dest
-      if fs.statSync(src).mtime > fs.statSync(dest).mtime
-        reason = " CHANGED".green
-      else
-      skipped++
-      grunt.log.writeln line + "EXISTS".grey
-      return next()
-    
-    child_process.execFile "identify", ['-format', '%w,%h,%[channels]', src], {}, (err, stdout) ->
+
+  processed = 0
+  skipped = 0
+  missing = 0
+
+  resize = (job, next) ->
+    child_process.execFile "identify", ['-format', '%w,%h,%[channels]', job.src], {}, (err, stdout) ->
       if err
-        grunt.log.write line
+        grunt.log.write job.line
         grunt.log.error err
         return next err
-      
+
       info = stdout.split ","
       hasAlpha = info[2].indexOf("a") >= 0
-      toJpeg = /\.jpe?g$/.test dest
-      
+      toJpeg = /\.jpe?g$/.test job.dest
+
       # if hasAlpha
       #   TODO
-      
+
       size =
         width: Number(info[0])
         height: Number(info[1])
-      
+
       widthScale = heightScale = 0
       widthScale = job.width / size.width if job.width
       heightScale = job.height / size.height if job.height
-      
+
       doCrop = job.flags.indexOf("#") >= 0
-      
+
       if doCrop or widthScale is 0 or heightScale is 0
         scale = Math.max widthScale, heightScale
       else
         scale = Math.min widthScale, heightScale
-      
-      scaled = 
+
+      scaled =
         width: Math.round(size.width * scale)
         height: Math.round(size.height * scale)
-        
-      grunt.file.mkdir path.dirname dest
-      
-      args = [src]
-      
-      if hasAlpha and not /\.png$/.test dest
+
+      grunt.file.mkdir path.dirname job.dest
+
+      args = [job.src]
+
+      if hasAlpha and not /\.png$/.test job.dest
         args.push "-background", "white"
         args.push "-flatten"
         args.push "-alpha", "off"
-      
+
       args.push "-gravity", "center" if doCrop
       args.push "-scale", "#{scaled.width}x#{scaled.height}"
-      
+
       args.push "-crop", "#{job.width ? scaled.width}x#{job.height ? scaled.height}+0+0" if doCrop
       args.push "-quality", "78" if toJpeg
-      
-      args.push dest
-      
-      child_process.execFile "convert", args, {}, (err) -> 
-        grunt.log.write(line + reason)
+
+      args.push job.dest
+
+      child_process.execFile "convert", args, {}, (err) ->
+        grunt.log.write(job.line + job.reason)
         if err then grunt.log.error() else grunt.log.ok()
         processed++ unless err
         next err
+
+  iterator = (id, next) ->
+    job = jobs[id]
+    sources = path.join srcRoot, job.src
+    job.src = params.grunt.file.expand(sources)[0]
+    job.dest = path.join destRoot, id
+    job.line = "Resizing #{job.dest.cyan} "
+    job.reason = ""
+    
+    unless job.src
+      missing++
+      grunt.log.write job.line
+      grunt.log.error "Couldn't find #{sources.cyan}"
+      return next()
+
+    return resize job, next unless grunt.file.exists job.dest
+
+    fs.stat job.src, (err, srcStats) ->
+      return next err if err
+      fs.stat job.dest, (err, destStats) ->
+        if err
+          next err
+        else if srcStats.mtime > destStats.mtime
+          job.reason = "MODIFIED ".magenta
+          resize job, next
+        else
+          skipped++
+          grunt.log.writeln job.line + "EXISTS".grey
+          next()
     
   async.eachLimit jobIds, workers, iterator, (err) ->
-    grunt.log.ok "#{String(processed).green} images resized, #{String(skipped).grey} images skipped, #{String(missing).red} images missing." unless err
+    unless err
+      msg = "#{String(processed).green} images resized, #{String(skipped).grey} images skipped, #{String(missing).red} images missing."
+      grunt.log.ok msg
+      
     callback err
   
 preprocess = (params, callback) ->
